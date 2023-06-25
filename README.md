@@ -2,7 +2,7 @@
 
 **Summary:**
 
-This application was created purposely for the [Udacity iOS Developer Nanodegree](https://www.udacity.com). This project firmed up my knowledge on creating anapplication that allows users to search for photos in different locations.
+This application was created purposely for the [Udacity iOS Developer Nanodegree](https://www.udacity.com). The app will allow users to drop pins on a map, as if they were stops on a tour. Users will then be able to download pictures for the location and persist both the pictures, and the association of the pictures with the pin.
 
 **The application offers the following features:**
 
@@ -13,7 +13,7 @@ This application was created purposely for the [Udacity iOS Developer Nanodegree
 * UINavigationController
 * UICollectionViews
 * MVC
-* Swift
+* Swift 5
 * API's
 * Extensions
 
@@ -27,7 +27,7 @@ This application was created purposely for the [Udacity iOS Developer Nanodegree
 
 **Closing:**
 
-In conclusion, I have learned a lot by working on this project. I am confident that I mastered UIKit, MapKit, API's and am able to successfully create applications using navigation, a long with additional libraries. 
+I worked with UIKit, MapKit, API's and am able to successfully create applications using navigation, a long with additional libraries. 
 
 ![vt3](https://cloud.githubusercontent.com/assets/20284373/23568011/c4e5aa96-0026-11e7-9340-6e97f9d42b99.png) ![vt2](https://cloud.githubusercontent.com/assets/20284373/23568013/c4eaa302-0026-11e7-841e-c540975ae004.png) ![vt1](https://cloud.githubusercontent.com/assets/20284373/23568012/c4eaac8a-0026-11e7-96db-1f8996540319.png)
 
