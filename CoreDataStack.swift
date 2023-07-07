@@ -9,105 +9,103 @@
 import Foundation
 import CoreData
 
-    //Core Data Stack
-
+// Core Data Stack
 struct CoreDataStack {
     
-    private let model: NSManagedObjectModel
-    internal let coordinator: NSPersistentStoreCoordinator
-    private let modelURL: URL
-    internal let dbURL: URL
-    let context: NSManagedObjectContext
+    private let modelURL: URL // The URL of the model file
+    internal let databaseURL: URL // The URL of the SQLite database file
+    let context: NSManagedObjectContext // The managed object context
+    private let model: NSManagedObjectModel // The managed object model
+    internal let coordinator: NSPersistentStoreCoordinator // The persistent store coordinator
+   
     
+    // Initialization method for creating a CoreDataStack instance
     init?(modelName: String) {
-    
+        
+        // Find the URL of the model file in the main bundle
         guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else {
-            print("Unable To Find \(modelName).self In The Main Bundle")
             return nil
         }
         
         self.modelURL = modelURL
-    
+        
+        // Create a managed object model from the model file URL
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else {
-            
-            print("Unable To Create A Model From \(modelURL)")
+            print("Error creating a model from \(modelURL)")
             return nil
         }
         
         self.model = model
-
+        
+        // Create a persistent store coordinator with the managed object model
         coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-
+        
+        // Create a main queue concurrency type managed object context
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
-
+        
         let fm = FileManager.default
         
+        // Get the URL of the Documents folder
         guard let docUrl = fm.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            
-            print("Unable To Reach The Documents Folder")
+            print("Error got while trying to reach the Documents folder")
             return nil
         }
         
-        self.dbURL = docUrl.appendingPathComponent("VirtualTourist.sqlite")
-       
-        let options = [NSInferMappingModelAutomaticallyOption: true,NSMigratePersistentStoresAutomaticallyOption: true]
+        self.databaseURL = docUrl.appendingPathComponent("VirtualTourist.sqlite")
+        
+        let options = [NSInferMappingModelAutomaticallyOption: true, NSMigratePersistentStoresAutomaticallyOption: true]
         
         do {
-            
-            try addStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: dbURL, options: options as [NSObject : AnyObject]?)
+            // Add the persistent store to the coordinator
+            try addPersistentStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: databaseURL, options: options as [NSObject : AnyObject]?)
             
         } catch {
-            
-            print("Unable To Add Store At \(dbURL)")
+            print("Error derived while trying to add store at \(databaseURL)")
         }
     }
     
-    func addStoreCoordinator(_ storeType: String, configuration: String?, storeURL: URL, options : [NSObject:AnyObject]?) throws {
-        
-        try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: dbURL, options: nil)
+    // Method to add a persistent store to the coordinator
+    func addPersistentStoreCoordinator(_ storeType: String, configuration: String?, storeURL: URL, options: [NSObject: AnyObject]?) throws {
+        try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: databaseURL, options: nil)
     }
 }
 
-internal extension CoreDataStack  {
+// Internal extension for additional functionality of CoreDataStack
+internal extension CoreDataStack {
     
-    func dropAllData() throws {
-
-        try coordinator.destroyPersistentStore(at: dbURL, ofType:NSSQLiteStoreType , options: nil)
-        try addStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: dbURL, options: nil)
+    // Method to drop all data from the persistent store
+    func dropAllDataFromPersistentStore() throws {
+        try coordinator.destroyPersistentStore(at: databaseURL, ofType: NSSQLiteStoreType, options: nil)
+        try addPersistentStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: databaseURL, options: nil)
     }
 }
 
+// Extension for additional functionality of CoreDataStack
 extension CoreDataStack {
     
+    // Method to save the managed object context
     func saveContext() throws {
-        
         if context.hasChanges {
-            
             try context.save()
         }
     }
     
-    func autoSave(_ delayInSeconds : Int) {
-        
+    // Method to autosave the managed object context with a specified delay
+    func autoSaveObject(_ delayInSeconds: Int) {
         if delayInSeconds > 0 {
-            
             do {
-                
                 try saveContext()
                 print("Autosaving")
-                
             } catch {
-                
-                print("Error While Autosaving")
+                print("Error while autosaving")
             }
             
             let delayInNanoSeconds = UInt64(delayInSeconds) * NSEC_PER_SEC
             let time = DispatchTime.now() + Double(Int64(delayInNanoSeconds)) / Double(NSEC_PER_SEC)
-            
+            //call dispatch queue
             DispatchQueue.main.asyncAfter(deadline: time) {
-                
-                self.autoSave(delayInSeconds)
+                self.autoSaveObject(delayInSeconds)
             }
         }
     }

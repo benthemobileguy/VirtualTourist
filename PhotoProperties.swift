@@ -13,13 +13,14 @@ import CoreData
 extension Photo {
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Photo> {
-        
         return NSFetchRequest<Photo>(entityName: "Photo");
     }
     
-    @NSManaged public var imageData: NSData?
-    @NSManaged public var imageURL: String?
-    @NSManaged public var index: Int16
-    @NSManaged public var pin: Pin?
+    @NSManaged public var index: Int16 // The index of the photo
+    @NSManaged public var pin: Pin? // The associated pin
+    @NSManaged public var imageData: NSData? // The data of the photo
+    @NSManaged public var imageURL: String? // The URL of the photo
+    
     
 }
+
